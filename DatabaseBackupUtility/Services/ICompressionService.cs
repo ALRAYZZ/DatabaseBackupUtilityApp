@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DatabaseBackupUtility.Services
 {
-	public interface IStorageService
+	public interface ICompressionService
 	{
-		void Store(string sourceFilePath, string destinationPath);
+		void Compress(string filePath);
 	}
 }

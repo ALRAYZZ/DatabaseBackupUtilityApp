@@ -15,5 +15,8 @@ namespace DatabaseBackupUtility.Models
 		public bool Compress { get; set; }
 		public StorageType Storage { get; set; }
 		public string LogPath { get; set; }
+		public string AwsS3BucketName { get; set; }
+		public string AzureBlobStorageContainerName { get; set; }
+		public string AzureBlobStorageConnectionString { get; set; }
 	}
 }

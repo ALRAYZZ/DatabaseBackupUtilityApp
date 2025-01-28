@@ -4,6 +4,7 @@ using Azure.Storage.Blobs;
 using DatabaseBackupUtility.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -12,48 +13,22 @@ using System.Threading.Tasks;
 
 namespace DatabaseBackupUtility.Services
 {
-	public class SQLiteBackupService : IDatabaseBackupService
+	public class SQLiteBackupService : BaseBackupService
 	{
-		private readonly IStorageService _storageService;
-
-		public SQLiteBackupService(IStorageService storageService)
+		public SQLiteBackupService(IStorageService storageService, ICompressionService compressionService)
+			: base(storageService, compressionService)
 		{
-			_storageService=storageService;
 		}
 
-		public void Backup(BackupOptions options)
+		protected override string GetBackupFilePath(BackupOptions options)
 		{
-			string backupFilePath = Path.Combine(options.BackupPath, "backup.sqlite");
-			
-			_storageService.Store(options.ConnectionString, backupFilePath);
-
-			if (options.Compress)
-			{
-				CompressBackup(backupFilePath);
-			}
-
+			return Path.Combine(options.BackupPath, "backup.sqlite");
 		}
 
-		private void CompressBackup(string backupFilePath)
+		protected override void PerformBackup(string sourceFilePath, string backupFilePath)
 		{
-			Console.WriteLine("Compressing backup file...");
-
-			string compressedFilePath = backupFilePath + ".zip";
-
-			try
-			{
-				using (var fileStream = new FileStream(compressedFilePath, FileMode.Create))
-				using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create, true))
-				{
-					var zipArchiveEntry = archive.CreateEntryFromFile(backupFilePath, Path.GetFileName(backupFilePath));
-				}
-
-				Console.WriteLine("Backup successfully compressed.");
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Error encountered when compressing backup file. Message:'{0}'", e.Message);
-			}
+			Console.WriteLine($"Performing backup for SQLite database from {sourceFilePath} to {backupFilePath}");
+			File.Copy(sourceFilePath, backupFilePath, true);
 		}
 	}
 }

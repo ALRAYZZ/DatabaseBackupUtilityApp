@@ -17,19 +17,19 @@ namespace DatabaseBackupUtility.Commands
 			IStorageService storageService = options.Storage switch
 			{
 				StorageType.Local => new LocalStorageService(),
-				StorageType.AzureBlobStorage => new AzureBlobStorageService(),
-				StorageType.AWSS3 => new AWSS3StorageService(),
+				StorageType.AzureBlobStorage => new AzureBlobStorageService(options.AzureBlobStorageConnectionString, options.AzureBlobStorageContainerName),
+				StorageType.AWSS3 => new AWSS3StorageService(options.AwsS3BucketName),
 				_ => throw new NotSupportedException($"Storage type {options.Storage} is not supported")
 			};
 
-
+			ICompressionService compressionService = new CompressionService();
 
 			IDatabaseBackupService backupService = options.DbType switch
 			{
-				DatabaseType.MySQL => new MySQLBackupService(),
-				DatabaseType.PostgreSQL => new PostgreSQLBackupService(),
-				DatabaseType.MongoDB => new MongoDBBackupService(),
-				DatabaseType.SQLite => new SQLiteBackupService(storageService),
+				DatabaseType.MySQL => new MySQLBackupService(storageService, compressionService),
+				DatabaseType.PostgreSQL => new PostgreSQLBackupService(storageService, compressionService),
+				DatabaseType.MongoDB => new MongoDBBackupService(storageService, compressionService),
+				DatabaseType.SQLite => new SQLiteBackupService(storageService, compressionService),
 				_ => throw new NotSupportedException($"Database type {options.DbType} is not supported")
 			};
 

@@ -10,7 +10,14 @@ namespace DatabaseBackupUtility.Services
 {
 	public class AWSS3StorageService : IStorageService
 	{
-		public void Store(string sourceFilePath, string backupFilePath)
+		private readonly string _bucketName;
+
+		public AWSS3StorageService(string bucketName)
+		{
+			_bucketName=bucketName;
+		}
+
+		public void Store(string sourceFilePath, string destinationPath)
 		{
 			Console.WriteLine("Storing backup in AWS S3...");
 
@@ -22,8 +29,8 @@ namespace DatabaseBackupUtility.Services
 				var fileTransferUtilityRequest = new TransferUtilityUploadRequest
 				{
 					FilePath = sourceFilePath,
-					BucketName = "my-bucket",
-					Key = Path.GetFileName(backupFilePath)
+					BucketName = _bucketName,
+					Key = destinationPath
 				};
 
 				fileTransferUtility.Upload(fileTransferUtilityRequest);

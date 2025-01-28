@@ -9,13 +9,22 @@ namespace DatabaseBackupUtility.Services
 {
 	public class AzureBlobStorageService : IStorageService
 	{
-		public void Store(string sourceFilePath, string backupFilePath)
+		private readonly string _connectionString;
+		private readonly string _containerName;
+
+		public AzureBlobStorageService(string connectionString, string containerName)
+		{
+			_connectionString=connectionString;
+			_containerName=containerName;
+		}
+
+		public void Store(string sourceFilePath, string destinationPath)
 		{
 			Console.WriteLine("Storing backup in Azure Blob Storage...");
 
-			var blobServiceClient = new BlobServiceClient("connectionString");
-			var containerClient = blobServiceClient.GetBlobContainerClient("my-container");
-			var blobClient = containerClient.GetBlobClient(Path.GetFileName(backupFilePath));
+			var blobServiceClient = new BlobServiceClient(_connectionString);
+			var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+			var blobClient = containerClient.GetBlobClient(destinationPath);
 
 			try
 			{

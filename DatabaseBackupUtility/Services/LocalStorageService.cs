@@ -8,10 +8,10 @@ namespace DatabaseBackupUtility.Services
 {
 	internal class LocalStorageService : IStorageService
 	{
-		public void Store(string sourceFilePath, string backupFilePath)
+		public void Store(string sourceFilePath, string destinationPath)
 		{
-			Console.WriteLine($"Storing backup locally at {backupFilePath}");
-			File.Copy(sourceFilePath, backupFilePath, true);
+			Console.WriteLine($"Storing backup locally at {destinationPath}");
+			File.Copy(sourceFilePath, destinationPath, true);
 		}
 	}
 }
