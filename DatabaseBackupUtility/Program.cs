@@ -50,6 +50,7 @@ class Program
 
 		rootCommand.SetHandler((DatabaseType dbtype, string connectionString, string backupPath, ScheduleType schedule, bool compress,StorageType storage,string logPath ) =>
 		{
+			// Here we are creating an instance of BackupOptions and passing the values from the command line arguments
 			var options = new BackupOptions
 			{
 				DbType = dbtype,

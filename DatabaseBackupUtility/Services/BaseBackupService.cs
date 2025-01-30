@@ -21,10 +21,14 @@ namespace DatabaseBackupUtility.Services
 		public void Backup(BackupOptions options)
 		{
 			string backupFilePath = GetBackupFilePath(options);
+			Console.WriteLine($"Backcup file path: {backupFilePath}");
 
 			PerformBackup(options.ConnectionString, backupFilePath);
+			Console.WriteLine("Backup performed successfully");
 
 			_storageService.Store(backupFilePath, GetStorageDestinationPath(options, backupFilePath));
+			Console.WriteLine("Backup stored successfully");
+
 
 			if (options.Compress)
 			{

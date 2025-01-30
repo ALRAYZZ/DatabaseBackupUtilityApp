@@ -1,4 +1,5 @@
 ﻿using DatabaseBackupUtility.Models;
+using DatabaseBackupUtility.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,32 +28,15 @@ namespace DatabaseBackupUtility.Services
 
 			string command = $"pg_dump {connectionString} -f \'{backupFilePath}'";
 
-			ExecuteCommand(command);
-		}
-
-		private void ExecuteCommand(string command)
-		{
-			var processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
+			try
 			{
-				CreateNoWindow = true,
-				UseShellExecute = false,
-				RedirectStandardError = true,
-				RedirectStandardOutput = true
-			};
-
-			var process = new Process()
+				CommandExecutor.ExecuteCommand(command);
+			}
+			catch (Exception ex)
 			{
-				StartInfo = processInfo
-			};
-
-			process.OutputDataReceived += (sender, e) => Console.WriteLine("output>>" + e.Data);
-			process.ErrorDataReceived += (sender, e) => Console.WriteLine("error>>" + e.Data);
-
-			process.Start();
-			process.BeginOutputReadLine();
-			process.BeginErrorReadLine();
-			process.WaitForExit();
-			process.Close();
+				Console.WriteLine($"Error during MySQL backup: {ex.Message}");
+				throw;
+			}
 		}
 	}
 }
